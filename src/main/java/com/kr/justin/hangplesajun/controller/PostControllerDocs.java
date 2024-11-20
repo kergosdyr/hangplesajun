@@ -1,13 +1,23 @@
 package com.kr.justin.hangplesajun.controller;
 
+import java.time.LocalDateTime;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.kr.justin.hangplesajun.domain.User;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Tag(name = "게시물 API", description = "게시물 관련 API")
 @SecurityRequirement(name = "bearerAuth")
@@ -23,7 +33,8 @@ public interface PostControllerDocs {
 	)
 	@PostMapping("/api/post")
 	ResponseEntity<PostResponse> getPost(
-		@RequestBody(description = "게시물 생성 요청", required = true) PostRequest request
+		@RequestBody(description = "게시물 생성 요청", required = true) PostRequest request,
+		User user
 	);
 
 	@Operation(
@@ -34,7 +45,12 @@ public interface PostControllerDocs {
 		}
 	)
 	@GetMapping("/api/posts")
-	ResponseEntity<PostsResponse> getPosts();
+	ResponseEntity<PostsResponse> getPosts(
+		@RequestParam(required = false) String title,
+		@RequestParam(required = false) String content,
+		@RequestParam(required = false) LocalDateTime createAt,
+		@RequestParam(required = false, defaultValue = "DESC") SearchOrder order
+	);
 
 	@Operation(
 		summary = "게시물 상세 조회",
@@ -61,8 +77,10 @@ public interface PostControllerDocs {
 	@PutMapping("/api/post/{id}")
 	ResponseEntity<PostResponse> updatePost(
 		@Parameter(description = "게시물 ID", required = true, example = "1") @PathVariable Long id,
-		@RequestBody(description = "게시물 수정 요청", required = true) PostRequest request
+		@RequestBody(description = "게시물 수정 요청", required = true) PostRequest request,
+		User user
 	);
+
 
 	@Operation(
 		summary = "게시물 삭제",
@@ -73,7 +91,7 @@ public interface PostControllerDocs {
 		}
 	)
 	@DeleteMapping("/api/post/{id}")
-	ResponseEntity<PostResponse> deletePost(
+	ResponseEntity<Void> deletePost(
 		@Parameter(description = "게시물 ID", required = true, example = "1") @PathVariable Long id
 	);
 }
