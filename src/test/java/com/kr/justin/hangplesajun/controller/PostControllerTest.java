@@ -15,9 +15,8 @@ class PostControllerTest extends WebIntegrationTest {
 
     @Test
     void testCreatePost_Success() {
-        given()
+        givenAuth()
             .contentType(ContentType.JSON)
-            .header("Authorization", "Bearer " + jwtToken)
             .body(new PostRequest("Test Title", "Test Content"))
             .when()
             .post("/api/post")
@@ -30,9 +29,8 @@ class PostControllerTest extends WebIntegrationTest {
 
     @Test
     void testGetPosts_Success() {
-        given()
+        givenAuth()
             .contentType(ContentType.JSON)
-            .header("Authorization", "Bearer " + jwtToken)
             .when()
             .get("/api/posts")
             .prettyPeek()
@@ -46,8 +44,7 @@ class PostControllerTest extends WebIntegrationTest {
 
     @Test
     void testGetPostDetail_Success() {
-        given()
-            .header("Authorization", "Bearer " + jwtToken)
+        givenAuth()
             .contentType(ContentType.JSON)
             .when()
             .get("/api/post/3")
@@ -59,8 +56,7 @@ class PostControllerTest extends WebIntegrationTest {
 
     @Test
     void testUpdatePost_Success() {
-        given()
-            .header("Authorization", "Bearer " + jwtToken)
+        givenAuth()
             .contentType(ContentType.JSON)
             .body(new PostRequest("Updated Title", "Updated Content"))
             .when()
@@ -74,8 +70,7 @@ class PostControllerTest extends WebIntegrationTest {
 
     @Test
     void testDeletePost_Success() {
-        given()
-            .header("Authorization", "Bearer " + jwtToken)
+        givenAuth()
             .contentType(ContentType.JSON)
             .when()
             .delete("/api/post/3")

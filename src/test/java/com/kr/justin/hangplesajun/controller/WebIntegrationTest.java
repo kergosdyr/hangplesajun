@@ -1,5 +1,6 @@
 package com.kr.justin.hangplesajun.controller;
 
+import static io.restassured.RestAssured.given;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +18,7 @@ import com.kr.justin.hangplesajun.util.JwtUtil;
 
 import io.restassured.RestAssured;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
+import io.restassured.specification.RequestSpecification;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -49,5 +51,11 @@ public class WebIntegrationTest {
 		jwtToken = jwtUtil.generateToken(mockUserDetails.getUsername());
 
 	}
+
+	protected RequestSpecification givenAuth() {
+		return given()
+			.header("Authorization", "Bearer " + jwtToken);
+	}
+
 
 }
