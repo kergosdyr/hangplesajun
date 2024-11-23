@@ -1,32 +1,54 @@
 package com.kr.justin.hangplesajun.controller;
 
+import static com.kr.justin.hangplesajun.controller.PostResponse.from;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kr.justin.hangplesajun.domain.Post;
+import com.kr.justin.hangplesajun.domain.User;
+import com.kr.justin.hangplesajun.service.PostService;
+
+import lombok.RequiredArgsConstructor;
+
 @RestController
+@RequiredArgsConstructor
 public class PostController implements PostControllerDocs {
+
+	private final PostService postService;
 
 	@PostMapping("/api/post")
 	@Override
 	public ResponseEntity<PostResponse> getPost(
-		PostRequest request
-
+		PostRequest request,
+		@AuthenticationPrincipal User user
 	) {
-		return ResponseEntity.ok(null);
+		Post post = postService.create(Post.of(user.getId(), request.title(), request.content()));
+
+		return ResponseEntity.ok(from(post));
 	}
 
 	@GetMapping("/api/posts")
 	@Override
 	public ResponseEntity<PostsResponse> getPosts(
-
+		@RequestParam(required = false) String title,
+		@RequestParam(required = false) String content,
+		@RequestParam(required = false) LocalDateTime createAt,
+		@RequestParam(required = false, defaultValue = "DESC") SearchOrder order
 	) {
-		return ResponseEntity.ok(null);
+		List<Post> posts = postService.getAllBy(PostSearchQuery.of(title, content, createAt, order));
+		return ResponseEntity.ok(PostsResponse.of(posts));
 	}
 
 	@GetMapping("/api/post/{id}")
@@ -34,23 +56,28 @@ public class PostController implements PostControllerDocs {
 	public ResponseEntity<PostResponse> getPostDetail(
 		@PathVariable Long id
 	) {
-		return ResponseEntity.ok(null);
+		Post post = postService.get(id);
+		return ResponseEntity.ok(PostResponse.from(post));
 	}
 
 	@PutMapping("/api/post/{id}")
 	@Override
 	public ResponseEntity<PostResponse> updatePost(
 		@PathVariable Long id,
-		@RequestBody PostRequest request
+		@RequestBody PostRequest request,
+		@AuthenticationPrincipal User user
 	) {
-		return ResponseEntity.ok(null);
+		Post updatedPost = postService.update(id, Post.of(user.getId(), request.title(), request.content()));
+		return ResponseEntity.ok(PostResponse.from(updatedPost));
 	}
 
 	@DeleteMapping("/api/post/{id}")
 	@Override
-	public ResponseEntity<PostResponse> deletePost(
+	public ResponseEntity<Void> deletePost(
 		@PathVariable Long id
 	) {
-		return ResponseEntity.ok(null);
+		postService.delete(id);
+		return ResponseEntity.ok().build();
 	}
+
 }

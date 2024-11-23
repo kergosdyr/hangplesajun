@@ -1,6 +1,7 @@
 package com.kr.justin.hangplesajun.controller;
 
 import static com.kr.justin.hangplesajun.controller.LoginResponse.success;
+import static com.kr.justin.hangplesajun.controller.SignUpResponse.success;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kr.justin.hangplesajun.domain.User;
+import com.kr.justin.hangplesajun.service.UserService;
 import com.kr.justin.hangplesajun.util.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -19,6 +22,8 @@ public class AuthController implements AuthControllerDocs {
 
 	private final AuthenticationManager authenticationManager;
 
+	private final UserService userService;
+
 	private final JwtUtil jwtUtil;
 
 	@PostMapping("/api/auth/signup")
@@ -27,7 +32,10 @@ public class AuthController implements AuthControllerDocs {
 		@RequestBody SignUpRequest request
 
 	) {
-		return ResponseEntity.ok(null);
+
+		userService.signup(User.of(request.username(), request.password()));
+
+		return ResponseEntity.ok(success());
 	}
 
 	@PostMapping("/api/auth/login")
