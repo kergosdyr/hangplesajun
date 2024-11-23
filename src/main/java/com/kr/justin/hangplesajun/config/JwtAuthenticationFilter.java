@@ -31,7 +31,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtUtil jwtUtil;
 
-	private final UserDetailsService userDetailsService; // 사용자 정보 로드
+	private final CustomUserDetailsService userDetailsService; // 사용자 정보 로드
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request,
@@ -50,7 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		String username = jwtUtil.getUsernameFromToken(token);
 
 		if (isNotBlank(username) && SecurityContextHolder.getContext().getAuthentication() == null) {
-			UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+			UserPrincipal userDetails = this.userDetailsService.loadUserByUsername(username);
 
 			if (jwtUtil.isValidToken(token, userDetails)) {
 				UsernamePasswordAuthenticationToken authToken =
