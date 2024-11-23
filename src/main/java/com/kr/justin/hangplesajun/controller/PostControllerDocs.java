@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.kr.justin.hangplesajun.config.UserPrincipal;
 import com.kr.justin.hangplesajun.domain.User;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,7 +35,7 @@ public interface PostControllerDocs {
 	@PostMapping("/api/post")
 	ResponseEntity<PostResponse> getPost(
 		@RequestBody(description = "게시물 생성 요청", required = true) PostRequest request,
-		User user
+		UserPrincipal user
 	);
 
 	@Operation(
@@ -78,7 +79,7 @@ public interface PostControllerDocs {
 	ResponseEntity<PostResponse> updatePost(
 		@Parameter(description = "게시물 ID", required = true, example = "1") @PathVariable Long id,
 		@RequestBody(description = "게시물 수정 요청", required = true) PostRequest request,
-		User user
+		UserPrincipal user
 	);
 
 

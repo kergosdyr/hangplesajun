@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kr.justin.hangplesajun.config.UserPrincipal;
 import com.kr.justin.hangplesajun.domain.Post;
 import com.kr.justin.hangplesajun.domain.User;
 import com.kr.justin.hangplesajun.service.PostService;
@@ -29,17 +31,20 @@ public class PostController implements PostControllerDocs {
 	private final PostService postService;
 
 	@PostMapping("/api/post")
+	@PreAuthorize("hasRole('ROLE_USER')")
 	@Override
 	public ResponseEntity<PostResponse> getPost(
-		PostRequest request,
-		@AuthenticationPrincipal User user
+		@RequestBody PostRequest request,
+		@AuthenticationPrincipal(errorOnInvalidType = true) UserPrincipal user
 	) {
+
 		Post post = postService.create(Post.of(user.getId(), request.title(), request.content()));
 
 		return ResponseEntity.ok(from(post));
 	}
 
 	@GetMapping("/api/posts")
+	@PreAuthorize("hasRole('ROLE_USER')")
 	@Override
 	public ResponseEntity<PostsResponse> getPosts(
 		@RequestParam(required = false) String title,
@@ -52,6 +57,7 @@ public class PostController implements PostControllerDocs {
 	}
 
 	@GetMapping("/api/post/{id}")
+	@PreAuthorize("hasRole('ROLE_USER')")
 	@Override
 	public ResponseEntity<PostResponse> getPostDetail(
 		@PathVariable Long id
@@ -61,17 +67,19 @@ public class PostController implements PostControllerDocs {
 	}
 
 	@PutMapping("/api/post/{id}")
+	@PreAuthorize("hasRole('ROLE_USER')")
 	@Override
 	public ResponseEntity<PostResponse> updatePost(
 		@PathVariable Long id,
 		@RequestBody PostRequest request,
-		@AuthenticationPrincipal User user
+		@AuthenticationPrincipal UserPrincipal user
 	) {
 		Post updatedPost = postService.update(id, Post.of(user.getId(), request.title(), request.content()));
 		return ResponseEntity.ok(PostResponse.from(updatedPost));
 	}
 
 	@DeleteMapping("/api/post/{id}")
+	@PreAuthorize("hasRole('ROLE_USER')")
 	@Override
 	public ResponseEntity<Void> deletePost(
 		@PathVariable Long id
