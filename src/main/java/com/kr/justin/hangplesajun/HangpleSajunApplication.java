@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class HangpleSajunApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(HangpleSajunApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(HangpleSajunApplication.class, args);
+    }
 }

@@ -2,13 +2,10 @@ package com.kr.justin.hangplesajun.util;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-
-import org.springframework.stereotype.Component;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import java.util.Date;
-
 import javax.crypto.SecretKey;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
 @Component
 public class JwtUtil {
@@ -49,10 +46,6 @@ public class JwtUtil {
     }
 
     private Claims parseClaims(String token) {
-        return Jwts.parser()
-                .verifyWith(key)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+        return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();
     }
 }
