@@ -10,6 +10,7 @@ import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -43,7 +44,7 @@ public class SecurityConfig {
                         .anyRequest()
                         .authenticated())
                 .userDetailsService(userDetailsService)
-                .authenticationProvider(customAuthenticationProvider())
+                .authenticationProvider(authenticationProvider())
                 .exceptionHandling(handler -> handler.authenticationEntryPoint(customAuthenticationEntryPoint))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // 추가된 필터 설정
 
@@ -51,12 +52,18 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationProvider customAuthenticationProvider() {
+    public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setUserDetailsService(userDetailsService);
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
         daoAuthenticationProvider.setHideUserNotFoundExceptions(false);
+        daoAuthenticationProvider.supports(UsernamePasswordAuthenticationToken.class);
         return daoAuthenticationProvider;
+    }
+
+    @Bean
+    public AuthenticationManager customAuthenticationManager() {
+        return new ProviderManager(authenticationProvider());
     }
 
     @Bean

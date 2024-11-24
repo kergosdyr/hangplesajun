@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController implements AuthControllerDocs {
 
-    private final AuthenticationManager authenticationManager;
+    private final AuthenticationManager customAuthenticationManager;
 
     private final UserService userService;
 
@@ -37,7 +37,7 @@ public class AuthController implements AuthControllerDocs {
     public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest request) {
         var authRequest = UsernamePasswordAuthenticationToken.unauthenticated(request.username(), request.password());
 
-        authenticationManager.authenticate(authRequest);
+        customAuthenticationManager.authenticate(authRequest);
 
         var token = jwtUtil.generateToken(request.username());
 
