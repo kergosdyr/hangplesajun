@@ -47,11 +47,11 @@ class PostControllerTest extends WebIntegrationTest {
         givenAuth()
                 .contentType(ContentType.JSON)
                 .when()
-                .get("/api/post/3")
+                .get("/api/post/10003")
                 .prettyPeek()
                 .then()
                 .statusCode(200)
-                .body("id", equalTo(3));
+                .body("id", equalTo(10003));
     }
 
     @Test
@@ -60,7 +60,7 @@ class PostControllerTest extends WebIntegrationTest {
                 .contentType(ContentType.JSON)
                 .body(new PostRequest("Updated Title", "Updated Content"))
                 .when()
-                .put("/api/post/3")
+                .put("/api/post/10003")
                 .prettyPeek()
                 .then()
                 .statusCode(200)
@@ -73,7 +73,7 @@ class PostControllerTest extends WebIntegrationTest {
         givenAuth()
                 .contentType(ContentType.JSON)
                 .when()
-                .delete("/api/post/3")
+                .delete("/api/post/10003")
                 .then()
                 .statusCode(200);
     }

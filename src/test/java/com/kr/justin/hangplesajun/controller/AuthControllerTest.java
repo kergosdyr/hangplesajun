@@ -2,6 +2,7 @@ package com.kr.justin.hangplesajun.controller;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.startsWith;
 
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.DisplayName;
@@ -20,7 +21,10 @@ class AuthControllerTest extends WebIntegrationTest {
                 .post("/api/auth/login")
                 .then()
                 .statusCode(200)
-                .body("statusCode", equalTo("200"));
+                .body("statusCode", equalTo("200"))
+            .header("Authorization", startsWith("Bearer "));
+
+
     }
 
     @Test
@@ -74,15 +78,15 @@ class AuthControllerTest extends WebIntegrationTest {
     }
 
     @Test
-    @DisplayName("DB에 중복된 username이 없다면 회원을 저장하고 Client로 성공했다는 메시지, 상태코드 반환하기")
+    @DisplayName("DB에 중복된 username이 없다면 회원을 저장하고 토큰을 Header에 추가하고 Client로 성공했다는 메시지, 상태코드 반환하기")
     void testSignup_Success() {
         given().contentType(ContentType.JSON)
-                .body(new SignUpRequest("newuser", "Valid123!"))
-                .when()
-                .post("/api/auth/signup")
-                .then()
-                .statusCode(200)
-                .body("statusCode", equalTo("200"));
+            .body(new SignUpRequest("newuser", "Valid123!"))
+            .when()
+            .post("/api/auth/signup")
+            .then()
+            .statusCode(200)
+            .body("statusCode", equalTo("200"));
     }
 
     @Test
