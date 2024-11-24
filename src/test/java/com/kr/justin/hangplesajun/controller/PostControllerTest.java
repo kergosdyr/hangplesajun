@@ -1,10 +1,13 @@
 package com.kr.justin.hangplesajun.controller;
 
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 
 import io.restassured.http.ContentType;
+
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -77,4 +80,6 @@ class PostControllerTest extends WebIntegrationTest {
                 .then()
                 .statusCode(200);
     }
+
+
 }
