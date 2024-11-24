@@ -12,6 +12,7 @@ import org.springframework.test.context.jdbc.Sql;
 class AuthControllerTest extends WebIntegrationTest {
 
     @Test
+    @DisplayName("가입된 고객에 대해서 ID, PW 가 맞다면 로그인 된다.")
     void testLogin_Success() {
         given().contentType(ContentType.JSON)
                 .body(new LoginRequest("user1", "password1"))
