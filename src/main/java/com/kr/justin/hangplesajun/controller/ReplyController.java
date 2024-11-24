@@ -38,5 +38,4 @@ public class ReplyController {
         replyService.delete(id, user.getId());
         return ResponseEntity.ok(ReplyDeleteResponse.success());
     }
-
 }

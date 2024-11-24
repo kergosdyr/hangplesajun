@@ -59,5 +59,4 @@ public class WebIntegrationTest {
     protected RequestSpecification givenAdminAuth() {
         return given().header("Authorization", "Bearer " + adminJwtToken);
     }
-
 }

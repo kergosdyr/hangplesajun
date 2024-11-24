@@ -18,8 +18,6 @@ public record ErrorResponse(String statusCode, String msg) {
         return new ErrorResponse("400", msg);
     }
 
-
-
     public static ErrorResponse usernameDuplicated() {
         return new ErrorResponse("400", "중복된 username 입니다.");
     }

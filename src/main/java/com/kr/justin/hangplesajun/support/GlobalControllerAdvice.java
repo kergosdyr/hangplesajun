@@ -14,17 +14,16 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalControllerAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> methodArgumentNotValidException(
-        MethodArgumentNotValidException ex
-    ) {
+    public ResponseEntity<ErrorResponse> methodArgumentNotValidException(MethodArgumentNotValidException ex) {
         StringBuilder errors = new StringBuilder();
 
-        ex.getBindingResult().getFieldErrors().forEach(error ->
-            errors.append(error.getField()).append(" : ").append(error.getDefaultMessage()).append("\n")
-        );
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.methodArgumentInvalid(errors.toString()));
+        ex.getBindingResult().getFieldErrors().forEach(error -> errors.append(error.getField())
+                .append(" : ")
+                .append(error.getDefaultMessage())
+                .append("\n"));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.methodArgumentInvalid(errors.toString()));
     }
-
 
     @ExceptionHandler({BadCredentialsException.class})
     public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException e) {
