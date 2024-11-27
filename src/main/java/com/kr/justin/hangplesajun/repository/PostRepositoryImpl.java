@@ -1,11 +1,16 @@
 package com.kr.justin.hangplesajun.repository;
 
+import static com.kr.justin.hangplesajun.domain.QPost.post;
+
 import com.kr.justin.hangplesajun.controller.PostSearchQuery;
 import com.kr.justin.hangplesajun.domain.Post;
 import com.kr.justin.hangplesajun.domain.QPost;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -19,28 +24,36 @@ class PostRepositoryImpl implements QueryPostRepository {
     @Override
     public List<Post> getAllBy(PostSearchQuery query) {
 
-        QPost post = QPost.post;
-        BooleanBuilder whereClause = new BooleanBuilder();
-
-        if (StringUtils.hasText(query.title())) {
-            whereClause.and(post.title.containsIgnoreCase(query.title()));
-        }
-
-        if (StringUtils.hasText(query.content())) {
-            whereClause.and(post.content.containsIgnoreCase(query.content()));
-        }
-
-        if (query.createAt() != null) {
-            whereClause.and(post.createdAt.after(query.createAt()));
-        }
-
-        var orderSpecifier = getSortOrder(query).orElse(null);
+		var orderSpecifier = getSortOrder(query).orElse(null);
 
         return queryFactory
                 .selectFrom(post)
-                .where(whereClause)
+                .where(postSearchEq(query))
                 .orderBy(orderSpecifier)
                 .fetch();
+    }
+
+    private static BooleanBuilder postSearchEq(PostSearchQuery query) {
+		return new BooleanBuilder().and(userIdEq(query.userId()))
+            .and(titleEq(query.title()))
+            .and(contentEq(query.content()))
+            .and(createdAtAfter(query.createAt()));
+    }
+
+    private static BooleanExpression createdAtAfter(LocalDateTime createdAt) {
+        return createdAt != null ? post.createdAt.after(createdAt) : null;
+    }
+
+    private static BooleanExpression contentEq(String content) {
+        return StringUtils.hasText(content) ? post.content.containsIgnoreCase(content) : null;
+    }
+
+    private static BooleanExpression titleEq(String title) {
+        return StringUtils.hasText(title) ? post.title.containsIgnoreCase(title) : null;
+    }
+
+    private static BooleanExpression userIdEq(long userId) {
+        return userId != 0L ? post.userId.eq(userId) : null;
     }
 
     private Optional<OrderSpecifier<?>> getSortOrder(PostSearchQuery query) {
