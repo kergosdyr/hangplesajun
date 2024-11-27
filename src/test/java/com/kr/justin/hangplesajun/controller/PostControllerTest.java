@@ -1,80 +1,91 @@
 package com.kr.justin.hangplesajun.controller;
 
-import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
 
 import io.restassured.http.ContentType;
+
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.jdbc.Sql;
 
-@Sql({"/user_data.sql", "/post_data.sql"}) // 테스트 전에 스키마 및 데이터 설정
+@Sql({"/user_data.sql", "/post_data.sql", "/reply_data.sql"}) // 테스트 전에 스키마 및 데이터 설정
 class PostControllerTest extends WebIntegrationTest {
 
     @Test
+    @DisplayName("게시글 목록 조회 성공 테스트")
+    void testGetPostsList_Success() {
+        givenAuth()
+            .contentType(ContentType.JSON)
+            .when()
+            .get("/api/posts")
+            .prettyPeek()
+            .then()
+            .statusCode(200)
+            .body("postList", hasSize(greaterThan(0))) // 게시글이 존재하는지 확인
+            .body("postList[0].title", equalTo("First Post"))
+            .body("postList[0].replies", hasSize(2)) // 댓글 개수 확인
+            .body("postList[0].replies[0].content", equalTo("첫 번째 게시물에 대한 첫 번째 댓글"))
+            .body("postList[0].replies[1].content", equalTo("첫 번째 게시물에 대한 두 번째 댓글"))
+            .body("postList[0].createdAt", notNullValue());
+    }
+
+    @Test
+    @DisplayName("게시글 생성 성공 테스트")
     void testCreatePost_Success() {
         givenAuth()
-                .contentType(ContentType.JSON)
-                .body(new PostRequest("Test Title", "Test Content"))
-                .when()
-                .post("/api/post")
-                .prettyPeek()
-                .then()
-                .statusCode(200)
-                .body("title", equalTo("Test Title"))
-                .body("content", equalTo("Test Content"));
+            .contentType(ContentType.JSON)
+            .body(new PostRequest("Test Title", "Test Content"))
+            .when()
+            .post("/api/post")
+            .prettyPeek()
+            .then()
+            .statusCode(200)
+            .body("title", equalTo("Test Title"))
+            .body("content", equalTo("Test Content"));
     }
 
     @Test
-    void testGetPosts_Success() {
-        givenAuth()
-                .contentType(ContentType.JSON)
-                .when()
-                .get("/api/posts")
-                .prettyPeek()
-                .then()
-                .statusCode(200)
-                .body("postList", hasSize(2))
-                .body("postList.title", containsInAnyOrder("First Post", "Second Post"))
-                .body(
-                        "postList.content",
-                        containsInAnyOrder(
-                                "This is the content of the first post", "This is the content of the second post"));
-    }
-
-    @Test
+    @DisplayName("게시글 상세 조회 성공 테스트")
     void testGetPostDetail_Success() {
         givenAuth()
-                .contentType(ContentType.JSON)
-                .when()
-                .get("/api/post/10003")
-                .prettyPeek()
-                .then()
-                .statusCode(200)
-                .body("id", equalTo(10003));
+            .contentType(ContentType.JSON)
+            .when()
+            .get("/api/post/10003")
+            .prettyPeek()
+            .then()
+            .statusCode(200)
+            .body("id", equalTo(10003))
+            .body("title", equalTo("First Post"))
+            .body("content", equalTo("This is the content of the first post"))
+            .body("replies", hasSize(2)) // 댓글 개수 확인
+            .body("replies[0].content", equalTo("첫 번째 게시물에 대한 첫 번째 댓글"))
+            .body("replies[1].content", equalTo("첫 번째 게시물에 대한 두 번째 댓글"));
     }
 
     @Test
+    @DisplayName("게시글 수정 성공 테스트")
     void testUpdatePost_Success() {
         givenAuth()
-                .contentType(ContentType.JSON)
-                .body(new PostRequest("Updated Title", "Updated Content"))
-                .when()
-                .put("/api/post/10003")
-                .prettyPeek()
-                .then()
-                .statusCode(200)
-                .body("title", equalTo("Updated Title"))
-                .body("content", equalTo("Updated Content"));
+            .contentType(ContentType.JSON)
+            .body(new PostRequest("Updated Title", "Updated Content"))
+            .when()
+            .put("/api/post/10003")
+            .prettyPeek()
+            .then()
+            .statusCode(200)
+            .body("title", equalTo("Updated Title"))
+            .body("content", equalTo("Updated Content"));
     }
 
     @Test
+    @DisplayName("게시글 삭제 성공 테스트")
     void testDeletePost_Success() {
         givenAuth()
-                .contentType(ContentType.JSON)
-                .when()
-                .delete("/api/post/10003")
-                .then()
-                .statusCode(200);
+            .contentType(ContentType.JSON)
+            .when()
+            .delete("/api/post/10003")
+            .then()
+            .statusCode(200);
     }
 }
