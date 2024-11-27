@@ -3,13 +3,13 @@ package com.kr.justin.hangplesajun.repository;
 import static com.kr.justin.hangplesajun.domain.QPost.post;
 
 import com.kr.justin.hangplesajun.controller.PostSearchQuery;
+import com.kr.justin.hangplesajun.controller.SearchOrder;
 import com.kr.justin.hangplesajun.domain.Post;
 import com.kr.justin.hangplesajun.domain.QPost;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +24,7 @@ class PostRepositoryImpl implements QueryPostRepository {
     @Override
     public List<Post> getAllBy(PostSearchQuery query) {
 
-		var orderSpecifier = getSortOrder(query).orElse(null);
+        var orderSpecifier = getSortOrder(query).orElse(null);
 
         return queryFactory
                 .selectFrom(post)
@@ -34,10 +34,11 @@ class PostRepositoryImpl implements QueryPostRepository {
     }
 
     private static BooleanBuilder postSearchEq(PostSearchQuery query) {
-		return new BooleanBuilder().and(userIdEq(query.userId()))
-            .and(titleEq(query.title()))
-            .and(contentEq(query.content()))
-            .and(createdAtAfter(query.createAt()));
+        return new BooleanBuilder()
+                .and(userIdEq(query.userId()))
+                .and(titleEq(query.title()))
+                .and(contentEq(query.content()))
+                .and(createdAtAfter(query.createAt()));
     }
 
     private static BooleanExpression createdAtAfter(LocalDateTime createdAt) {
@@ -63,9 +64,9 @@ class PostRepositoryImpl implements QueryPostRepository {
             return Optional.empty();
         }
 
-        return switch (query.searchOrder()) {
-            case ASC -> Optional.of(post.createdAt.asc());
-            default -> Optional.of(post.createdAt.desc());
-        };
-    }
+		if (query.searchOrder() == SearchOrder.ASC) {
+			return Optional.of(post.createdAt.asc());
+		}
+		return Optional.of(post.createdAt.desc());
+	}
 }

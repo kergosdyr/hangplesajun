@@ -22,9 +22,7 @@ class AuthControllerTest extends WebIntegrationTest {
                 .then()
                 .statusCode(200)
                 .body("statusCode", equalTo("200"))
-            .header("Authorization", startsWith("Bearer "));
-
-
+                .header("Authorization", startsWith("Bearer "));
     }
 
     @Test
@@ -81,12 +79,12 @@ class AuthControllerTest extends WebIntegrationTest {
     @DisplayName("DB에 중복된 username이 없다면 회원을 저장하고 토큰을 Header에 추가하고 Client로 성공했다는 메시지, 상태코드 반환하기")
     void testSignup_Success() {
         given().contentType(ContentType.JSON)
-            .body(new SignUpRequest("newuser", "Valid123!"))
-            .when()
-            .post("/api/auth/signup")
-            .then()
-            .statusCode(200)
-            .body("statusCode", equalTo("200"));
+                .body(new SignUpRequest("newuser", "Valid123!"))
+                .when()
+                .post("/api/auth/signup")
+                .then()
+                .statusCode(200)
+                .body("statusCode", equalTo("200"));
     }
 
     @Test

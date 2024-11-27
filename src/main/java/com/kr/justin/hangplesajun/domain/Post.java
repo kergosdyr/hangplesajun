@@ -64,5 +64,4 @@ public class Post {
         this.title = post.getTitle();
         this.content = post.getContent();
     }
-
 }

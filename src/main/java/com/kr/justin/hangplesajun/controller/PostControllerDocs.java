@@ -40,7 +40,8 @@ public interface PostControllerDocs {
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String content,
             @RequestParam(required = false) LocalDateTime createAt,
-            @RequestParam(required = false, defaultValue = "DESC") SearchOrder order, UserPrincipal user);
+            @RequestParam(required = false, defaultValue = "DESC") SearchOrder order,
+            UserPrincipal user);
 
     @Operation(
             summary = "게시물 상세 조회",
@@ -51,7 +52,8 @@ public interface PostControllerDocs {
             })
     @GetMapping("/api/post/{id}")
     ResponseEntity<PostResponse> getPostDetail(
-            @Parameter(description = "게시물 ID", required = true, example = "1") @PathVariable Long id, UserPrincipal user);
+            @Parameter(description = "게시물 ID", required = true, example = "1") @PathVariable Long id,
+            UserPrincipal user);
 
     @Operation(
             summary = "게시물 수정",
@@ -77,5 +79,5 @@ public interface PostControllerDocs {
     @DeleteMapping("/api/post/{id}")
     ResponseEntity<Void> deletePost(
             @Parameter(description = "게시물 ID", required = true, example = "1") @PathVariable Long id,
-        UserPrincipal user);
+            UserPrincipal user);
 }
