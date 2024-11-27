@@ -15,7 +15,13 @@ public class PostService {
     private final PostRepository postRepository;
 
     @Transactional(readOnly = true)
-    public Post get(Long id) {
+    public Post getAny(long userId, long id) {
+
+        return postRepository.findByUserIdAndId(userId, id).orElseThrow(() -> new IllegalArgumentException("해당하는 게시글이 존재하지 않습니다"));
+    }
+
+    @Transactional(readOnly = true)
+    public Post get(long id) {
 
         return postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당하는 게시글이 존재하지 않습니다"));
     }
@@ -33,15 +39,33 @@ public class PostService {
     }
 
     @Transactional
-    public Post update(Long id, Post post) {
+    public Post updateAny(Long id, Post post) {
         Post existPost =
-                postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당하는 게시글이 존재하지 않습니다"));
+            postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당하는 게시글이 존재하지 않습니다"));
         existPost.update(post);
         return existPost;
     }
 
     @Transactional
-    public void delete(Long id) {
+    public Post update(Long id, Post post) {
+        Post existPost =
+            postRepository.findByUserIdAndId(post.getUserId(), id).orElseThrow(() -> new IllegalArgumentException("해당하는 게시글이 존재하지 않습니다"));
+        existPost.update(post);
+        return existPost;
+    }
+
+
+    @Transactional
+    public void deleteAny(Long id) {
         postRepository.deleteById(id);
     }
+
+    @Transactional
+    public void delete(Long userId, Long id) {
+        postRepository.deleteByUserIdAndId(userId, id);
+    }
+
+
+
+
 }
