@@ -13,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -57,15 +58,15 @@ public class PostController implements PostControllerDocs {
             @PathVariable Long id, @AuthenticationPrincipal UserPrincipal user) {
 
         if (user.isAdmin()) {
-            Post post = postService.get(id);
+            Post post = postService.getAny(id);
             return ResponseEntity.ok(PostResponse.from(post));
         }
 
-        Post post = postService.getAny(user.getId(), id);
+        Post post = postService.get(user.getId(), id);
         return ResponseEntity.ok(PostResponse.from(post));
     }
 
-    @PutMapping("/api/post/{id}")
+    @PatchMapping("/api/post/{id}")
     @PreAuthorize("hasRole('ROLE_USER')")
     @Override
     public ResponseEntity<PostResponse> updatePost(
