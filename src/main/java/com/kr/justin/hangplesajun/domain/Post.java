@@ -12,6 +12,8 @@ import jakarta.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import jakarta.persistence.OrderBy;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -53,6 +55,7 @@ public class Post {
     @OneToMany
     @JoinColumn(name = "post_id", foreignKey = @ForeignKey(name = "none"))
     @Builder.Default
+    @OrderBy("createdAt DESC")
     private List<Reply> replies = new ArrayList<>();
 
     public static Post of(long userId, String title, String content) {
