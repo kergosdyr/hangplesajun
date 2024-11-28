@@ -36,7 +36,7 @@ public class GlobalControllerAdvice {
     @ExceptionHandler({AccessDeniedException.class})
     public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException e) {
         log.error(e.getMessage(), e);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.unauthorizedAction());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ErrorResponse.unauthorized());
     }
 
     @ExceptionHandler({DataIntegrityViolationException.class})

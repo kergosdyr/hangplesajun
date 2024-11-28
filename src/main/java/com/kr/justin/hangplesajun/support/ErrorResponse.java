@@ -10,7 +10,7 @@ public record ErrorResponse(String statusCode, String msg) {
         return new ErrorResponse("400", "토큰이 유효하지 않습니다.");
     }
 
-    public static ErrorResponse unauthorizedAction() {
+    public static ErrorResponse unauthorized() {
         return new ErrorResponse("400", "작성자만 삭제/수정할 수 있습니다.");
     }
 
