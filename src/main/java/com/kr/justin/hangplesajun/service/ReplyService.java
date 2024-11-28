@@ -1,6 +1,5 @@
 package com.kr.justin.hangplesajun.service;
 
-import com.kr.justin.hangplesajun.domain.Post;
 import com.kr.justin.hangplesajun.domain.Reply;
 import com.kr.justin.hangplesajun.repository.PostRepository;
 import com.kr.justin.hangplesajun.repository.ReplyRepository;
@@ -29,6 +28,7 @@ public class ReplyService {
         reply.updateContent(content);
         return reply;
     }
+
     @Transactional
     public Reply updateAny(long id, String content) {
         Reply reply = replyRepository

@@ -64,9 +64,9 @@ class PostRepositoryImpl implements QueryPostRepository {
             return Optional.empty();
         }
 
-		if (query.searchOrder() == SearchOrder.ASC) {
-			return Optional.of(post.createdAt.asc());
-		}
-		return Optional.of(post.createdAt.desc());
-	}
+        if (query.searchOrder() == SearchOrder.ASC) {
+            return Optional.of(post.createdAt.asc());
+        }
+        return Optional.of(post.createdAt.desc());
+    }
 }
