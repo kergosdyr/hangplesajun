@@ -23,10 +23,15 @@ public class ReplyController {
         return ResponseEntity.ok(ReplyResponse.from(reply));
     }
 
-    @PutMapping("/api/replies/{id}")
+    @PatchMapping("/api/replies/{id}")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<ReplyResponse> updateReply(
             @PathVariable long id, @RequestBody ReplyRequest request, @AuthenticationPrincipal UserPrincipal user) {
+        if (user.isAdmin()) {
+            Reply updatedReply = replyService.updateAny(id, request.content());
+            return ResponseEntity.ok(ReplyResponse.from(updatedReply));
+        }
+
         Reply updatedReply = replyService.update(id, user.getId(), request.content());
         return ResponseEntity.ok(ReplyResponse.from(updatedReply));
     }
@@ -35,6 +40,12 @@ public class ReplyController {
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<ReplyDeleteResponse> deleteReply(
             @PathVariable long id, @AuthenticationPrincipal UserPrincipal user) {
+
+        if (user.isAdmin()) {
+            replyService.deleteAny(id);
+            return ResponseEntity.ok(ReplyDeleteResponse.success());
+        }
+
         replyService.delete(id, user.getId());
         return ResponseEntity.ok(ReplyDeleteResponse.success());
     }

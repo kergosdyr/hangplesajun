@@ -17,8 +17,7 @@ public class ReplyService {
 
     @Transactional
     public Reply create(long postId, long userId, String content) {
-        Post post =
-                postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("해당하는 게시글이 존재하지 않습니다."));
+        postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("해당하는 게시글이 존재하지 않습니다."));
         return replyRepository.save(Reply.of(postId, userId, content));
     }
 
@@ -30,11 +29,27 @@ public class ReplyService {
         reply.updateContent(content);
         return reply;
     }
+    @Transactional
+    public Reply updateAny(long id, String content) {
+        Reply reply = replyRepository
+                .findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 댓글이 존재하지 않거나 권한이 없습니다."));
+        reply.updateContent(content);
+        return reply;
+    }
 
     @Transactional
     public void delete(long id, long userId) {
         Reply reply = replyRepository
                 .findByIdAndUserId(id, userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 댓글이 존재하지 않거나 권한이 없습니다."));
+        replyRepository.delete(reply);
+    }
+
+    @Transactional
+    public void deleteAny(long id) {
+        Reply reply = replyRepository
+                .findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 댓글이 존재하지 않거나 권한이 없습니다."));
         replyRepository.delete(reply);
     }
