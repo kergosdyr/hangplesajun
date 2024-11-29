@@ -26,6 +26,8 @@ public class WebIntegrationTest {
 
     String jwtToken;
 
+    String adminJwtToken;
+
     @Autowired
     private JwtUtil jwtUtil;
 
@@ -35,15 +37,26 @@ public class WebIntegrationTest {
         RestAssuredMockMvc.mockMvc(mockMvc);
 
         // Create a mock user and generate a JWT token
-        UserDetails mockUserDetails = org.springframework.security.core.userdetails.User.withUsername("user1")
+        UserDetails mockUser = org.springframework.security.core.userdetails.User.withUsername("user1")
                 .password("password1")
                 .roles("USER")
                 .build();
 
-        jwtToken = jwtUtil.generateToken(mockUserDetails.getUsername());
+        // Create a mock user and generate a JWT token
+        UserDetails mockAdminUser = org.springframework.security.core.userdetails.User.withUsername("user1")
+                .password("password1")
+                .roles("ADMIN")
+                .build();
+
+        jwtToken = jwtUtil.generateToken(mockUser.getUsername());
+        adminJwtToken = jwtUtil.generateToken(mockAdminUser.getUsername());
     }
 
     protected RequestSpecification givenAuth() {
         return given().header("Authorization", "Bearer " + jwtToken);
+    }
+
+    protected RequestSpecification givenAdminAuth() {
+        return given().header("Authorization", "Bearer " + adminJwtToken);
     }
 }

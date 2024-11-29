@@ -3,10 +3,16 @@ package com.kr.justin.hangplesajun.domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -45,8 +51,13 @@ public class Post {
     @LastModifiedDate
     private LocalDateTime modifiedAt;
 
-    public static Post of(long userId, String title, String content) {
+    @OneToMany
+    @JoinColumn(name = "post_id", foreignKey = @ForeignKey(name = "none"))
+    @Builder.Default
+    @OrderBy("createdAt DESC")
+    private List<Reply> replies = new ArrayList<>();
 
+    public static Post of(long userId, String title, String content) {
         return Post.builder().userId(userId).title(title).content(content).build();
     }
 
